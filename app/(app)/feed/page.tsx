@@ -35,7 +35,8 @@ export default async function FeedPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Live requests</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Ranked for a {ROLE_LABEL[me.role]} — role fit first, then skills.
+          Ranked for {/^[AEIOU]/.test(ROLE_LABEL[me.role]) ? "an" : "a"}{" "}
+          {ROLE_LABEL[me.role]} — role fit first, then skills.
         </p>
       </div>
 
