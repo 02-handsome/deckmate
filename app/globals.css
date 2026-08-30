@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  DeckMate Productivity — ported from the Stitch export's DESIGN.md.
+
+  That file ships two palettes that disagree: a Material-3 token block in
+  the front matter (primary #00535b) and a prose section naming the brand
+  teal as #006D77. The rendered mockups match the prose, so the prose wins
+  and the disagreement is resolved here, once, rather than drifting across
+  components later.
+*/
+@layer base {
+  :root {
+    --background: 200 69% 97%; /* #F4FAFD */
+    --foreground: 193 17% 10%; /* #161D1F */
+    --card: 0 0% 100%;
+    --card-foreground: 193 17% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 193 17% 10%;
+    --primary: 185 100% 23%; /* #006D77 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 174 36% 64%; /* #83C5BE */
+    --secondary-foreground: 185 100% 15%;
+    --muted: 200 30% 95%;
+    --muted-foreground: 185 9% 32%; /* #3E494A */
+    --accent: 174 45% 88%;
+    --accent-foreground: 185 100% 18%;
+    --destructive: 0 75% 42%; /* #BA1A1A */
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 91%;
+    --ring: 185 100% 23%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 193 17% 10%;
+    --foreground: 200 30% 95%;
+    --card: 193 14% 14%;
+    --card-foreground: 200 30% 95%;
+    --popover: 193 14% 14%;
+    --popover-foreground: 200 30% 95%;
+    --primary: 187 55% 69%; /* #82D3DE — inverse-primary */
+    --primary-foreground: 190 100% 7%;
+    --secondary: 174 25% 30%;
+    --secondary-foreground: 200 30% 95%;
+    --muted: 193 12% 20%;
+    --muted-foreground: 195 12% 70%;
+    --accent: 185 30% 24%;
+    --accent-foreground: 187 55% 80%;
+    --destructive: 0 62% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 193 10% 24%;
+    --input: 193 10% 24%;
+    --ring: 187 55% 69%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /*
+    Elevation, per DESIGN.md: tonal layers and low-contrast outlines
+    rather than heavy shadows.
+  */
+  .dm-card {
+    @apply rounded-2xl border bg-card;
+  }
+  .dm-float {
+    box-shadow: 0 10px 30px hsl(185 100% 23% / 0.05);
+  }
+  /* Tags and chips always take a full pill, to stay distinct from buttons. */
+  .dm-chip {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold;
+  }
+}
