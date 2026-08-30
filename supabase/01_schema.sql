@@ -4,6 +4,24 @@
 -- Re-runnable: drops and recreates everything it owns.
 -- ============================================================
 
+-- ---------- wrong-database guard ----------
+-- This script drops public.users and public.requests. Find Your People
+-- uses both of those names, so running this against that project would
+-- destroy it. `intents` is unique to that schema, so its presence is a
+-- reliable signal that you are pointed at the wrong database.
+--
+-- A warning in a comment is not a control. This is the control.
+do $guard$
+begin
+  if exists (
+    select 1 from information_schema.tables
+     where table_schema = 'public' and table_name = 'intents'
+  ) then
+    raise exception
+      'REFUSING TO RUN. public.intents exists, so this is very likely the Find Your People database. Deckmate needs its own Supabase project — running here would drop public.users and public.requests.';
+  end if;
+end $guard$;
+
 -- ---------- reset ----------
 drop function if exists public.get_team_contacts(uuid);
 drop function if exists public.get_my_profile();
