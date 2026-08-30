@@ -1,0 +1,32 @@
+name: Supabase keep-alive
+
+# A free Supabase project pauses after 7 days without activity. A grader
+# opening this in week three would find a dead app. One request a day is
+# enough to prevent that, and it costs nothing.
+#
+# Requires two repository secrets (Settings -> Secrets -> Actions):
+#   SUPABASE_URL              your project URL
+#   SUPABASE_PUBLISHABLE_KEY  the anon/publishable key
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # 06:17 UTC daily
+  workflow_dispatch: # so you can prove it works without waiting a day
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Touch the database
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/requests?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}")
+          echo "HTTP $code"
+          # 401 is a healthy response here: the anon role is refused by RLS,
+          # which still proves the project is awake and answering.
+          if [ "$code" = "000" ]; then
+            echo "No response — project may be paused."
+            exit 1
+          fi
