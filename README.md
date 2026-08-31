@@ -6,7 +6,7 @@ and skills; contact details are exchanged only after an application is
 accepted; and a reliability score you can only see by rating your past
 teammates gives people a reason to come back.
 
-**Live:** _add your Vercel URL here after deploying_
+**Live:** https://deckmate-xi.vercel.app
 
 ---
 
