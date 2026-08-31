@@ -53,6 +53,39 @@ well it works for you today.
 
 ---
 
+## New lessons, earned in this build
+
+**L11 — Verifying with an account that skips the broken screen proves
+nothing.** Profile creation was refused for every real signup while all
+30 seeded accounts worked perfectly, because seeded users already have a
+profile row and never see that screen. Every test passed; the product
+was broken for 100% of new users. This is L6 wearing different clothes:
+the seed data was so complete that the failing path never ran.
+
+**L12 — `upsert` is not `insert` and the difference is a privilege.**
+`.upsert()` compiles to `INSERT ... ON CONFLICT DO UPDATE SET id = ...,
+email = ...`. Those two columns are deliberately absent from the UPDATE
+grant, so Postgres refuses the entire statement — including the plain
+insert that would have been allowed. If a grant is narrow by design,
+prefer the narrowest statement that does the job.
+
+**L13 — The deployment mechanism chosen for convenience becomes the
+thing that fails.** A manual CLI deploy produced a live URL in minutes
+and was therefore kept, instead of connecting the repo as the plan
+called for. It then stopped moving the production alias without saying
+so. Three separate pushes appeared deployed and were not. Connect the
+repo in Phase 1; make `git push` the entire deployment procedure.
+
+**L14 — Vercel's Hobby plan blocks commits whose author it does not
+recognise, and calls it "collaboration".** The commit author email must
+match the GitHub identity linked to the Vercel account — here
+`308250860+02-handsome@users.noreply.github.com`, not a personal
+address. A mismatch yields a `Blocked` deployment and an upgrade prompt,
+with no mention of the actual cause. Check `git log --format='%ae'`
+against a repo that already deploys.
+
+---
+
 ## Where the lessons landed in this build
 
 | Lesson | Where |
