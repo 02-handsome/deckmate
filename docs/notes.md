@@ -158,6 +158,40 @@ Analyst adds less than a first Storyteller. Deadline proximity is
 deliberately the smallest term, so urgency breaks ties between good
 matches rather than promoting bad ones.
 
+### Contact format: @handle or exactly 10 digits
+
+Enforced in three places, deliberately, and the order matters:
+
+1. **`CHECK` constraint** (`supabase/03_contact_format.sql`) — the only
+   real gate. The publishable key ships in the browser, so anyone can
+   POST straight past the form.
+2. **Server action** — same rule, better error message than a raw
+   constraint violation.
+3. **`components/contact-field.tsx`** — live feedback while typing.
+
+All three call the same rule from `lib/contact.ts`. Three copies of a
+validation rule drift, and the copy that drifts is always the one that
+matters.
+
+**`+91` is not stripped.** "+91 9876543210" is twelve digits and is
+rejected rather than silently normalised to ten. Quietly discarding a
+prefix would store a different number from the one the user checked on
+screen. Spaces and dashes *are* stripped, because those change nothing
+about which number it is.
+
+**The constraint is `NOT VALID`.** A validated constraint checks every
+existing row when added and fails outright if one breaks it. Contact
+handles are unreadable from outside the database by design, so neither
+the app nor a developer can audit them beforehand. `NOT VALID` skips
+that backfill check while enforcing on every insert and update from then
+on. Promote it with `validate constraint` once the violation count in
+that file reads 0.
+
+Not built: a country-code field, or restricting the first digit to 6–9
+as Indian mobile numbers actually do. Both are easy additions if the
+scope is ever meant to be "a real phone number" rather than "ten
+digits".
+
 ### Expiry on read, not cron
 
 `listOpenRequests()` filters `status = 'open' AND deadline > now()`.

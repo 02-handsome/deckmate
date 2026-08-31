@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { saveProfile } from "@/app/actions";
+import { ContactField } from "@/components/contact-field";
 import { getMyProfile, getSessionUserId } from "@/lib/queries";
 import { ROLES, ROLE_LABEL, SKILLS, WORK_STYLES, WORK_STYLE_LABEL } from "@/lib/types";
 
@@ -129,17 +130,7 @@ export default async function ProfileSetup({
           />
         </Field>
 
-        <Field
-          label="Contact handle"
-          hint="Shared only after you accept someone, or they accept you."
-        >
-          <input
-            name="contact_handle"
-            required
-            className={input}
-            placeholder="@yourhandle or a phone number"
-          />
-        </Field>
+        <ContactField />
 
         <button
           type="submit"

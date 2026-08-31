@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { normaliseContact } from "@/lib/contact";
 import type { CompType, UserRole, WorkStyle } from "@/lib/types";
 
 async function requireUserId(): Promise<string> {
@@ -20,6 +21,15 @@ export async function saveProfile(formData: FormData) {
   const { data: claims } = await supabase.auth.getClaims();
   const email = (claims?.claims?.email as string) ?? "";
 
+  // Validate the contact before anything else — it is the one field with a
+  // format, and the database will refuse a bad one anyway (see
+  // supabase/03_contact_format.sql). Failing here just produces a better
+  // message than a constraint violation would.
+  const contact = normaliseContact(String(formData.get("contact_handle") ?? ""));
+  if (!contact.ok) {
+    redirect(`/profile-setup?error=${encodeURIComponent(contact.error)}`);
+  }
+
   const row = {
     id: userId,
     email,
@@ -31,13 +41,13 @@ export async function saveProfile(formData: FormData) {
     skills: formData.getAll("skills").map(String),
     credibility_line:
       String(formData.get("credibility_line") ?? "").trim() || null,
-    contact_handle: String(formData.get("contact_handle") ?? "").trim(),
+    contact_handle: contact.value,
     avatar_url: `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(
       String(formData.get("name") ?? "deckmate").replace(/\s/g, ""),
     )}`,
   };
 
-  if (!row.name || !row.contact_handle || !row.role) {
+  if (!row.name || !row.role) {
     redirect("/profile-setup?error=missing");
   }
 
