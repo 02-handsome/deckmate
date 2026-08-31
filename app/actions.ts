@@ -41,8 +41,26 @@ export async function saveProfile(formData: FormData) {
     redirect("/profile-setup?error=missing");
   }
 
-  const { error } = await supabase.from("users").upsert(row);
-  if (error) redirect(`/profile-setup?error=${encodeURIComponent(error.message)}`);
+  /*
+    insert, not upsert.
+
+    An upsert compiles to INSERT ... ON CONFLICT DO UPDATE SET id = ...,
+    email = ..., and the UPDATE grant deliberately excludes both of those
+    columns — you should not be able to rewrite your own id or the email
+    your account is keyed on. Postgres refuses the whole statement with
+    "permission denied for table users", so profile creation failed for
+    every new account while working fine for seeded ones.
+
+    This path only ever creates: the page redirects to /feed if a profile
+    already exists. A 23505 here means that redirect was raced, so send
+    them where they were going anyway rather than showing an error.
+  */
+  const { error } = await supabase.from("users").insert(row);
+
+  if (error) {
+    if (error.code === "23505") redirect("/feed");
+    redirect(`/profile-setup?error=${encodeURIComponent(error.message)}`);
+  }
 
   revalidatePath("/", "layout");
   redirect("/feed");

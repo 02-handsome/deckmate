@@ -140,6 +140,45 @@ console.log("\nL3 — a terminal status attempts to move again:");
 }
 
 // -----------------------------------------------------------------------
+console.log("\nProfile creation is permitted by the grant:");
+{
+  /*
+    Regression test for a real bug. saveProfile once used .upsert(), which
+    compiles to ON CONFLICT DO UPDATE SET id = ..., email = ... — columns
+    the UPDATE grant deliberately withholds. Every new signup died on
+    "permission denied for table users" while seeded accounts, which never
+    touch that screen, worked perfectly.
+
+    This asserts the grant accepts the insert *shape* without creating a
+    row: as an existing user the statement must get far enough to trip the
+    primary key (23505). A permission error means the grant regressed.
+    Nothing is written, so there is nothing to clean up (L9).
+  */
+  const c = await signIn(OUTSIDER.email);
+  const { data: session } = await c.auth.getUser();
+  const { error } = await c.from("users").insert({
+    id: session.user.id,
+    email: OUTSIDER.email,
+    name: "grant probe",
+    year: 2025,
+    section: "A",
+    role: "analyst",
+    work_style: "flexible",
+    skills: [],
+    credibility_line: null,
+    contact_handle: "@probe",
+    avatar_url: null,
+  });
+  check(
+    "a new user could insert their own profile row",
+    error?.code === "23505",
+    error
+      ? `${error.code}: ${error.message}`
+      : "unexpectedly succeeded — a row may have been created",
+  );
+}
+
+// -----------------------------------------------------------------------
 console.log(
   `\n${failures === 0 ? "All checks passed." : `${failures} CHECK(S) FAILED.`}\n`,
 );
