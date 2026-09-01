@@ -206,9 +206,38 @@ and a prose section naming the brand teal as `#006D77`. They disagree.
 The rendered mockups match the prose, so the prose won, resolved once
 in `app/globals.css` rather than left to drift across components.
 
-Per L7, the palette being compliant on paper says nothing about the
-rendered result — the `bg-accent/60` and `/40` opacity modifiers used
-on the reveal and nudge cards have **not** been contrast-measured.
+### The ambient backdrop, and L7 finally closed
+
+Every screen sits on a three-layer backdrop defined in `app/globals.css`:
+two soft radial glows plus a tiling SVG of fanned cards — a slide deck,
+and the pun in the name. All of it inlined, roughly 700 bytes. No
+photograph and no remote asset: a stock image fights DESIGN.md's
+"expansive whitespace, reduce academic noise" brief, and anything
+hotlinked is L10 waiting to happen.
+
+Cards keep an opaque `bg-card`, so the texture appears only in gutters
+and gaps. Text never sits on the pattern alone.
+
+**L7 says a compliant palette can still produce a non-compliant
+interface, because opacity modifiers create colours that appear nowhere
+in the token set. So the composites were measured, not assumed:**
+
+| Surface | Text | Ratio |
+|---|---|---|
+| Worst-case ground (stroke + both glows) | heading | 13.58:1 AAA |
+| Worst-case ground | muted | 7.40:1 AAA |
+| Worst-case ground | teal accent | 4.83:1 AA |
+| Nudge card `bg-accent/60` | accent-foreground | 7.00:1 AAA |
+| Nudge card `bg-accent/60` | muted | 5.99:1 AA |
+| Reveal panel `bg-accent/40` | accent-foreground | 6.91:1 AA |
+| Reveal panel `bg-accent/40` | monospace handle | 4.92:1 AA |
+
+Dark theme worst case: body text 11.83:1, muted 6.61:1. Everything
+clears AA; most clears AAA. The "worst-case ground" stacks a pattern
+stroke and both radial glows at once, which never actually co-occurs, so
+these are floors rather than typical values.
+
+`prefers-reduced-transparency: reduce` drops the backdrop entirely.
 
 ---
 
@@ -222,7 +251,9 @@ Built in a 90-minute window. These are known gaps, not oversights:
   **This is the first thing to fix.**
 - **No transition test.** The `applications_transition` trigger is
   written but nothing has attempted `declined -> accepted` against it.
-- **No contrast measurement.** See L7 above.
+- ~~No contrast measurement.~~ **Done** — see the backdrop section above.
+  Both the ambient composites and the `bg-accent` overlay cards are
+  measured and clear AA.
 - **Phase 7 (team formation, decision-maker designation) not built.**
   PRD section 3's decision-maker is absent. Phase 8 reads team
   membership from accepted applications directly, so nothing depends

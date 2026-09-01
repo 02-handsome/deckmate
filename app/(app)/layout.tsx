@@ -30,7 +30,7 @@ export default async function AppLayout({
   if (!profile) redirect("/profile-setup");
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-4 px-4 py-3 md:max-w-6xl md:px-8">
           <Link

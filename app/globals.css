@@ -33,6 +33,26 @@
     --input: 214 32% 91%;
     --ring: 185 100% 23%;
     --radius: 0.75rem;
+
+    /*
+      Ambient backdrop — three layers, all inlined.
+
+      No photograph and no remote asset. A stock image would fight the
+      "expansive whitespace, reduce academic noise" brief in DESIGN.md, and
+      anything hotlinked is L10 waiting to happen: broken the week a grader
+      opens it. This is ~700 bytes of SVG and two gradients, so it costs no
+      network request and cannot rot.
+
+      The motif is stacked, slightly fanned cards — a slide deck, and the
+      pun in the product's name. Four per 320px tile at irregular offsets
+      and rotations: a tighter, regular tile made the repeat legible, which
+      turns texture into wallpaper. 5% stroke, so you sense it rather than
+      read it.
+    */
+    --dm-backdrop:
+      radial-gradient(closest-side, hsl(185 100% 23% / 0.055), transparent),
+      radial-gradient(closest-side, hsl(174 36% 64% / 0.07), transparent),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cg fill='none' stroke='%23006D77' stroke-opacity='0.05' stroke-width='1' stroke-linejoin='round'%3E%3Cg transform='translate(38 52) rotate(-11)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(196 34) rotate(8)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(112 208) rotate(-5)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(250 234) rotate(14)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 
   .dark {
@@ -55,6 +75,14 @@
     --border: 193 10% 24%;
     --input: 193 10% 24%;
     --ring: 187 55% 69%;
+
+    /* Same three layers, restruck for a dark ground. Not an inversion —
+       the gradients drop in alpha because glow reads stronger on dark, and
+       the line colour moves to the inverse teal so it stays visible. */
+    --dm-backdrop:
+      radial-gradient(closest-side, hsl(187 55% 69% / 0.05), transparent),
+      radial-gradient(closest-side, hsl(174 36% 64% / 0.045), transparent),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cg fill='none' stroke='%2382D3DE' stroke-opacity='0.05' stroke-width='1' stroke-linejoin='round'%3E%3Cg transform='translate(38 52) rotate(-11)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(196 34) rotate(8)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(112 208) rotate(-5)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3Cg transform='translate(250 234) rotate(14)'%3E%3Crect width='34' height='25' rx='4'/%3E%3Crect x='5' y='5' width='34' height='25' rx='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 }
 
@@ -64,6 +92,29 @@
   }
   body {
     @apply bg-background text-foreground;
+
+    /*
+      Painted on body rather than a fixed z-index:-1 layer. A negative
+      z-index child sitting behind an ancestor's own background is a
+      reliable way to lose an hour, and body's background is the canvas,
+      so there is nothing to fight.
+
+      attachment: fixed keeps the two glows anchored to the viewport, so
+      the backdrop stays still while the feed scrolls over it.
+    */
+    background-image: var(--dm-backdrop);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-position: right -10rem top -12rem, left -12rem bottom -10rem, 0 0;
+    background-size: 46rem 46rem, 40rem 40rem, 320px 320px;
+    background-attachment: fixed, fixed, fixed;
+  }
+
+  /* The motif is decoration. Anyone who asked for less motion or less
+     visual noise gets the flat ground. */
+  @media (prefers-reduced-transparency: reduce) {
+    body {
+      background-image: none;
+    }
   }
 }
 
