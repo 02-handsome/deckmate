@@ -55,8 +55,9 @@ export default async function FeedPage({
         </Link>
       )}
 
-      <div className="-mx-4 overflow-x-auto px-4">
-        <div className="flex w-max gap-2 pb-1">
+      {/* Scrolls sideways on a phone; wraps once there's room for it. */}
+      <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+        <div className="flex w-max gap-2 pb-1 md:w-auto md:flex-wrap">
           <FilterPill href="/feed" label="All" active={!type} />
           {COMP_TYPES.map((t) => (
             <FilterPill
@@ -81,10 +82,13 @@ export default async function FeedPage({
           actionLabel="Post a request"
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {ranked.map((r) => (
             <li key={r.id}>
-              <Link href={`/requests/${r.id}`} className="dm-card block p-4">
+              <Link
+                href={`/requests/${r.id}`}
+                className="dm-card flex h-full flex-col p-4 transition-colors hover:border-primary/40"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{r.comp_name}</p>
@@ -118,16 +122,21 @@ export default async function FeedPage({
                   </p>
                 )}
 
-                <div className="mt-3 flex items-center justify-between border-t pt-3">
-                  <div className="flex items-center gap-2">
-                    <Avatar user={r.author} size={28} />
-                    <span className="text-xs text-muted-foreground">
-                      {r.author.name}
+                {/* mt-auto pins the byline to the card's base so footers
+                    line up across a grid row; the wrapper guarantees a gap
+                    above the rule even when the card is full. */}
+                <div className="mt-auto pt-3">
+                  <div className="flex items-center justify-between border-t pt-3">
+                    <div className="flex items-center gap-2">
+                      <Avatar user={r.author} size={28} />
+                      <span className="text-xs text-muted-foreground">
+                        {r.author.name}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {deadlineLabel(r.deadline)}
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {deadlineLabel(r.deadline)}
-                  </span>
                 </div>
               </Link>
             </li>

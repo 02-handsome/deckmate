@@ -24,7 +24,7 @@ export default async function ProfileSetup({
   if (await getMyProfile()) redirect("/feed");
 
   return (
-    <main className="mx-auto w-full max-w-md px-4 py-8">
+    <main className="mx-auto w-full max-w-md px-4 py-8 md:max-w-2xl md:py-14">
       <p className="text-lg font-bold tracking-tight">
         Deck<span className="text-primary">Mate</span>
       </p>

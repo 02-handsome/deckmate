@@ -38,7 +38,7 @@ export default async function RequestPage({
   const contactByUser = new Map(contacts.map((c) => [c.user_id, c]));
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-3xl space-y-5">
       {posted && (
         <div className="dm-card dm-float border-primary/30 bg-accent/60 p-4">
           <p className="text-sm font-semibold">Your post is live</p>

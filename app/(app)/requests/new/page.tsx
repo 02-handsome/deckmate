@@ -17,7 +17,7 @@ export default async function NewRequestPage({
   const min = today.toISOString().slice(0, 10);
 
   return (
-    <div>
+    <div className="mx-auto max-w-2xl">
       <h1 className="text-2xl font-semibold tracking-tight">
         Post a team request
       </h1>

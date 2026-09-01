@@ -26,8 +26,8 @@ export default async function PeoplePage({
         </p>
       </div>
 
-      <div className="-mx-4 overflow-x-auto px-4">
-        <div className="flex w-max gap-2 pb-1">
+      <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+        <div className="flex w-max gap-2 pb-1 md:w-auto md:flex-wrap">
           <FilterPill href="/people" label="All roles" active={!role} />
           {ROLES.map((r) => (
             <FilterPill
@@ -48,10 +48,13 @@ export default async function PeoplePage({
           actionLabel="Post a request"
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {people.map((u) => (
             <li key={u.id}>
-              <Link href={`/people/${u.id}`} className="dm-card block p-4">
+              <Link
+                href={`/people/${u.id}`}
+                className="dm-card flex h-full flex-col p-4 transition-colors hover:border-primary/40"
+              >
                 <div className="flex items-start gap-3">
                   <Avatar user={u} size={48} />
                   <div className="min-w-0 flex-1">
@@ -80,8 +83,10 @@ export default async function PeoplePage({
                   )}
                 </div>
                 {u.credibility_line && (
-                  <p className="mt-3 border-t pt-3 text-sm italic text-muted-foreground">
-                    &ldquo;{u.credibility_line}&rdquo;
+                  <p className="mt-auto pt-3 text-sm italic text-muted-foreground">
+                    <span className="block border-t pt-3">
+                      &ldquo;{u.credibility_line}&rdquo;
+                    </span>
                   </p>
                 )}
               </Link>

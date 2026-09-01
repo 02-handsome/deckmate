@@ -21,7 +21,7 @@ export default async function ProfileDetail({
   if (!user) notFound();
 
   return (
-    <div className="space-y-5">
+    <div className="mx-auto max-w-3xl space-y-5">
       <Link href="/people" className="text-sm text-muted-foreground">
         ← Back to people
       </Link>

@@ -27,7 +27,7 @@ export default async function ProfilePage() {
   const locked = pending.length > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
       <div className="flex items-center gap-4">
         <Avatar user={me} size={72} />
         <div className="min-w-0">
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
             body="After a competition's deadline passes, everyone you teamed with shows up here. One tap each."
           />
         ) : (
-          <ul className="space-y-3">
+          <ul className="grid gap-3 md:grid-cols-2">
             {pending.map(({ request, teammate }) => (
               <li key={`${request.id}:${teammate.id}`} className="dm-card p-4">
                 <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export default async function ProfilePage() {
             actionLabel="Post a request"
           />
         ) : (
-          <ul className="space-y-3">
+          <ul className="grid gap-3 md:grid-cols-2">
             {myRequests.map((r) => (
               <li key={r.id}>
                 <Link href={`/requests/${r.id}`} className="dm-card block p-4">
